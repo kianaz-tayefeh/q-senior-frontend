@@ -1,0 +1,14 @@
+<form [formGroup]="form" class="form-generator">
+  <div class="form-row">
+    <ng-container *ngFor="let input of inputs">
+      <div class="form-col" [ngClass]="'col' + (input.columns || 12)">
+        <ng-container
+          *ngComponentOutlet="
+            getInputComponent(input.component);
+            inputs: createInputs(input)
+          "
+        ></ng-container>
+      </div>
+    </ng-container>
+  </div>
+</form>
