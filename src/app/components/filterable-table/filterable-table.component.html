@@ -1,9 +1,6 @@
 <fieldset class="filter-bar-placeholder">
   <div class="filter-bar">
-    <form-generator
-      [inputs]="fields"
-      [debouncedFields]="['name', 'type']"
-    ></form-generator>
+    <form-generator [inputs]="fields"></form-generator>
 
     <div class="filter-actions">
       <button mat-raised-button color="primary" (click)="resetFilters()">
@@ -14,7 +11,7 @@
 </fieldset>
 
 <div class="table-wrapper">
-  @if(isLoading) {
+  @if (isLoading) {
   <div class="loading-indicator">
     <mat-spinner></mat-spinner>
   </div>

@@ -2,6 +2,15 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.9.
 
+## Features
+
+- Dynamic Filter System using a reusable form-generator component
+- Reactive form integration
+- Pagination with reset on filter change
+- Local Storage Caching with:
+  - Unique key strategy per filter query
+  - Optional expiration (TTL-ready)
+
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.

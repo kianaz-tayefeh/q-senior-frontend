@@ -3,16 +3,22 @@
 
   .filter-bar-placeholder {
     margin-bottom: 20px;
+    border: none;
+    padding: 0;
   }
 
   .filter-bar {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 1rem;
     align-items: flex-end;
+    display: flex;
+    justify-content: space-between;
   }
 
   .filter-actions {
-    margin-left: auto;
+    justify-content: center;
+    margin: auto 0;
+
     display: flex;
     align-items: center;
   }

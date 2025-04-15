@@ -16,12 +16,7 @@ import { MatInputModule } from '@angular/material/input';
   template: `
     <mat-form-field [ngClass]="className" appearance="fill">
       <mat-label>{{ label }}</mat-label>
-      <input
-        matInput
-        [formControl]="control"
-        [placeholder]="placeholder"
-        [disabled]="disabled"
-      />
+      <input matInput [formControl]="control" [placeholder]="placeholder" />
     </mat-form-field>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,6 +25,5 @@ export class TextInputComponent {
   @Input() control!: FormControl;
   @Input() label: string = '';
   @Input() placeholder: string = '';
-  @Input() disabled: boolean = false;
   @Input() className?: string;
 }

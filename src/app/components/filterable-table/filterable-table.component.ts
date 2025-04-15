@@ -20,7 +20,6 @@ import {
 } from '@angular/material/table';
 import { DataSource } from '@angular/cdk/collections';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -38,7 +37,6 @@ import { FormGeneratorComponent } from '../form-generator/form-generator.compone
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule,
     MatTable,
     MatProgressSpinner,
     MatFormFieldModule,
@@ -57,13 +55,13 @@ export class FilterableTableComponent<T>
 {
   private readonly destroyRef = inject(DestroyRef);
 
+  @ViewChild(MatTable, { static: true }) table?: MatTable<T>;
+  @ViewChild(FormGeneratorComponent) formGen!: FormGeneratorComponent;
+
   @ContentChildren(MatHeaderRowDef) headerRowDefs?: QueryList<MatHeaderRowDef>;
   @ContentChildren(MatRowDef) rowDefs?: QueryList<MatRowDef<T>>;
   @ContentChildren(MatColumnDef) columnDefs?: QueryList<MatColumnDef>;
   @ContentChild(MatNoDataRow) noDataRow?: MatNoDataRow;
-
-  @ViewChild(MatTable, { static: true }) table?: MatTable<T>;
-  @ViewChild(FormGeneratorComponent) formGen!: FormGeneratorComponent;
 
   @Input() columns: string[] = [];
   @Input() dataSource:
@@ -75,25 +73,13 @@ export class FilterableTableComponent<T>
   @Input() fields: FormInput[] = [];
 
   readonly filters$ = new BehaviorSubject<Record<string, any>>({});
-  form: FormGroup;
-
-  constructor(private fb: FormBuilder) {
-    this.form = this.fb.group({});
-  }
 
   ngAfterViewInit(): void {
-    this.filters$.subscribe(console.log);
-
     this.formGen.filters$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((filters) => {
         this.filters$.next(filters);
       });
-
-    const readyForm = this.formGen.formReady$.getValue();
-    if (readyForm) {
-      this.form = readyForm;
-    }
   }
 
   ngAfterContentInit(): void {
@@ -104,9 +90,10 @@ export class FilterableTableComponent<T>
   }
 
   resetFilters(): void {
-    if (!this.form) return;
+    const form = this.formGen.getForm();
+    if (!form) return;
 
-    this.form.reset();
+    form.reset();
     this.filters$.next({});
   }
 }

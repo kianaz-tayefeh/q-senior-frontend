@@ -6,13 +6,15 @@
   }
 
   .form-row {
-    display: grid;
+    display: flex;
     grid-template-columns: repeat(12, 1fr);
-    align-items: start;
+    align-items: center;
+    width: 100%;
   }
 
   .form-col {
     width: 100%;
+    padding-right: 25px;
   }
 
   .col1 {

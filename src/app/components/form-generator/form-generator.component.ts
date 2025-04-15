@@ -3,6 +3,8 @@ import {
   Input,
   ChangeDetectionStrategy,
   OnInit,
+  inject,
+  DestroyRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -12,6 +14,7 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { BehaviorSubject, merge } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { FormInput } from '../../models/form';
 import {
@@ -29,8 +32,9 @@ import { InputComponentsEnum } from '../../constants/form';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormGeneratorComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
+
   @Input() inputs: FormInput[] = [];
-  @Input() debouncedFields: string[] = [];
 
   readonly filters$ = new BehaviorSubject<Record<string, any>>({});
   readonly formReady$ = new BehaviorSubject<FormGroup | null>(null);
@@ -54,15 +58,27 @@ export class FormGeneratorComponent implements OnInit {
   }
 
   private initWatchers(): void {
+    const debouncedFields = this.inputs
+      .filter(
+        (i) => i.debounced === true || i.component === InputComponentsEnum.Text
+      )
+      .map((i) => i.name);
+
     const { debounced$, immediate$ } = createFieldStreams(
       this.form.controls,
-      this.debouncedFields
+      debouncedFields
     );
 
-    merge(...debounced$, ...immediate$).subscribe(() => {
-      const cleaned = this.cleanEmpty(this.form.getRawValue());
-      this.filters$.next(cleaned);
-    });
+    merge(...debounced$, ...immediate$)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        const cleaned = this.cleanEmpty(this.form.getRawValue());
+        this.filters$.next(cleaned);
+      });
+  }
+
+  getForm(): FormGroup | null {
+    return this.formReady$.getValue();
   }
 
   private isEmpty(val: any): boolean {

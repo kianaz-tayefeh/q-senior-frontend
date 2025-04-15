@@ -5,5 +5,6 @@ export interface FormInput {
   label: string;
   component: InputComponentsEnum;
   columns?: number;
+  debounced?: boolean;
   props?: Record<string, any>;
 }
